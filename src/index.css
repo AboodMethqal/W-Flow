@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 200 43% 7%;
+    --foreground: 207 52% 90%;
+    --card: 204 30% 11%;
+    --card-foreground: 207 52% 90%;
+    --popover: 203 25% 12%;
+    --popover-foreground: 207 52% 90%;
+    --primary: 161 64% 60%;
+    --primary-foreground: 162 100% 11%;
+    --primary-container: 162 100% 33%;
+    --primary-container-foreground: 162 100% 9%;
+    --secondary: 201 20% 78%;
+    --secondary-foreground: 202 24% 19%;
+    --secondary-container: 203 14% 27%;
+    --muted: 204 17% 16%;
+    --muted-foreground: 156 12% 76%;
+    --accent: 204 17% 16%;
+    --accent-foreground: 207 52% 90%;
+    --destructive: 10 76% 83%;
+    --destructive-foreground: 0 100% 3%;
+    --border: 160 10% 26%;
+    --input: 204 17% 20%;
+    --ring: 161 64% 60%;
+    --radius: 0.75rem;
+
+    /* Emerald Ledger surface system */
+    --surface: 200 43% 7%;
+    --surface-dim: 200 43% 7%;
+    --surface-bright: 203 14% 22%;
+    --surface-container-lowest: 205 52% 5%;
+    --surface-container-low: 203 30% 10%;
+    --surface-container: 203 23% 12%;
+    --surface-container-high: 204 21% 16%;
+    --surface-container-highest: 203 17% 20%;
+    --surface-tint: 161 64% 60%;
+    --on-surface: 207 52% 90%;
+    --on-surface-variant: 156 12% 76%;
+    --outline: 155 5% 55%;
+    --outline-variant: 164 10% 26%;
+    --inverse-surface: 207 52% 90%;
+    --inverse-on-surface: 204 24% 18%;
+
+    /* Tertiary / error */
+    --tertiary: 10 100% 83%;
+    --tertiary-container: 8 60% 64%;
+    --error-container: 0 100% 29%;
+
+    /* WhatsApp green */
+    --whatsapp: 142 70% 49%;
+
+    /* Gradient tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(162 100% 33%), hsl(161 64% 60%));
+    --shadow-primary: 0px 20px 40px hsla(161, 64%, 60%, 0.1);
+    --shadow-float: 0px 20px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    direction: rtl;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, .brand-font {
+    font-family: 'Manrope', sans-serif;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-surface-container/80 backdrop-blur-xl;
+  }
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary-container)), hsl(var(--primary)));
+  }
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
