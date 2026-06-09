@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useWorkspace } from "@/hooks/useWorkspace";
 import { toast } from "sonner";
-import { Copy, Key, Plus, Trash2, Eye, EyeOff, Check, X, ExternalLink } from "lucide-react";
+import { Copy, Key, Plus, Trash2, Eye, EyeOff, Check, X } from "lucide-react";
 
 interface ApiKey {
   id: string;
@@ -23,7 +23,6 @@ export default function ApiKeysSection() {
   const [creating, setCreating] = useState(false);
   const [showKey, setShowKey] = useState<string | null>(null);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
-  const [copiedLink, setCopiedLink] = useState(false);
 
   const loadApiKeys = async () => {
     if (!user || !currentWorkspace?.id) return;
@@ -173,39 +172,6 @@ export default function ApiKeysSection() {
           </p>
         </div>
       </div>
-
-      {/* Telegram Store Link */}
-      {currentWorkspace?.slug && (
-        <div className="bg-green-500/5 rounded-xl p-4 border border-green-500/20 space-y-3">
-          <div className="flex items-center gap-2">
-            <ExternalLink className="w-4 h-4 text-green-500" />
-            <h4 className="text-sm font-bold text-green-500">رابط المتجر في تليجرام</h4>
-          </div>
-          <p className="text-xs text-on-surface-variant">
-            شارك هذا الرابط مع عملائك ليبدأوا المحادثة مع مساعد المبيعات الذكي:
-          </p>
-          <div className="flex gap-2">
-            <div className="flex-1 bg-surface-container-highest rounded-xl px-4 py-2.5 text-sm font-mono truncate dir-ltr text-left">
-              https://t.me/wflowAbod_bot?start={currentWorkspace.slug}
-            </div>
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(`https://t.me/wflowAbod_bot?start=${currentWorkspace.slug}`);
-                setCopiedLink(true);
-                toast.success("تم نسخ رابط المتجر");
-                setTimeout(() => setCopiedLink(false), 2000);
-              }}
-              className="px-4 py-2.5 bg-surface-container-high hover:bg-surface-container-highest rounded-xl text-sm font-bold transition-colors flex items-center gap-2"
-            >
-              {copiedLink ? (
-                <><Check className="w-4 h-4 text-green-500" /><span>تم النسخ</span></>
-              ) : (
-                <><Copy className="w-4 h-4" /><span>نسخ</span></>
-              )}
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Create New API Key */}
       <div className="bg-surface-container rounded-xl p-4 space-y-3">

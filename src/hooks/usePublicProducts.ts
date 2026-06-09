@@ -4,17 +4,27 @@ import type { Tables } from "@/integrations/supabase/types";
 
 type Product = Tables<"products">;
 
+export interface StoreInfo {
+  workspaceName: string;
+  workspaceId: string;
+  logoUrl: string | null;
+  description: string | null;
+  phone: string | null;
+  address: string | null;
+  socialLinks: Record<string, string>;
+}
+
 export function usePublicProducts(slug: string | undefined) {
   return useQuery({
     queryKey: ["public-products", slug],
     queryFn: async () => {
-      if (!slug) return [];
+      if (!slug) return null;
       const { data: ws } = await supabase
         .from("workspaces")
-        .select("id, name")
+        .select("id, name, logo_url, description, phone, address, social_links")
         .eq("slug", slug)
         .maybeSingle();
-      if (!ws) return [];
+      if (!ws) return null;
       const { data: products } = await supabase
         .from("products")
         .select("*")
@@ -22,7 +32,18 @@ export function usePublicProducts(slug: string | undefined) {
         .eq("is_available", true)
         .order("category", { ascending: true })
         .order("name", { ascending: true });
-      return { workspaceName: ws.name, products: (products ?? []) as Product[] };
+      return {
+        store: {
+          workspaceName: ws.name,
+          workspaceId: ws.id,
+          logoUrl: ws.logo_url,
+          description: ws.description,
+          phone: ws.phone,
+          address: ws.address,
+          socialLinks: (ws.social_links as Record<string, string>) || {},
+        } as StoreInfo,
+        products: (products ?? []) as Product[],
+      };
     },
     enabled: !!slug,
   });

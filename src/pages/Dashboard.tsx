@@ -1,34 +1,61 @@
 import { useState, useMemo } from "react";
-import { Plus, Download, Search, ClipboardCheck, ArrowLeft, Loader2 } from "lucide-react";
+import { Download, Search, ArrowLeft, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
+import QuickStats from "@/components/dashboard/QuickStats";
+import ReadinessChecklist from "@/components/dashboard/ReadinessChecklist";
+import QuickActions from "@/components/dashboard/QuickActions";
 import NewOrderModal from "@/components/modals/NewOrderModal";
 import { useOrders } from "@/hooks/useOrders";
+import { useProducts } from "@/hooks/useProducts";
+import { useCustomers } from "@/hooks/useCustomers";
+import { useWorkspace } from "@/hooks/useWorkspace";
 import { startOfDay } from "date-fns";
 import { toast } from "sonner";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { orders, isLoading } = useOrders();
+  const { currentWorkspace } = useWorkspace();
+  const { orders, isLoading: ordersLoading } = useOrders();
+  const { products, isLoading: productsLoading } = useProducts();
+  const { customers, isLoading: customersLoading } = useCustomers();
   const [isNewOrderOpen, setIsNewOrderOpen] = useState(false);
   const [searchNum, setSearchNum] = useState("");
 
   const todayStart = useMemo(() => startOfDay(new Date()), []);
 
-  // Compute simplified stats
   const stats = useMemo(() => {
     const todayOrders = orders.filter((o) => new Date(o.created_at) >= todayStart);
     const todaySales = todayOrders
       .filter((o) => o.status === "completed" || o.status === "delivering")
       .reduce((sum, o) => sum + Number(o.amount), 0);
     const pendingOrders = orders.filter((o) => o.status === "pending").length;
+    const completedOrders = orders.filter((o) => o.status === "completed").length;
 
     return {
       todayOrdersCount: todayOrders.length,
       todaySales,
       pendingOrders,
+      completedOrders,
     };
   }, [orders, todayStart]);
+
+  const quickStatsData = useMemo(() => ({
+    totalProducts: products.length,
+    totalCustomers: customers.length,
+    totalOrders: orders.length,
+    pendingOrders: stats.pendingOrders,
+    completedOrders: stats.completedOrders,
+  }), [products.length, customers.length, orders.length, stats.pendingOrders, stats.completedOrders]);
+
+  const checklistData = useMemo(() => ({
+    storeInfo: !!(currentWorkspace?.name && (currentWorkspace as any).description),
+    productsAdded: products.length > 0,
+    productImages: products.some((p) => !!p.image_url),
+    telegramActive: orders.length >= 0,
+    ordersReceived: orders.length > 0,
+    displayName: currentWorkspace?.name ?? "",
+  }), [currentWorkspace, products, orders.length]);
 
   const last5Orders = useMemo(() => orders.slice(0, 5), [orders]);
 
@@ -64,7 +91,7 @@ export default function Dashboard() {
     ]);
 
     const csvContent =
-      "\uFEFF" + // Unicode BOM for Excel Arabic support
+      "\uFEFF" +
       [headers.join(","), ...rows.map((row) => row.map((val) => `"${val}"`).join(","))].join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -94,6 +121,8 @@ export default function Dashboard() {
     cancelled: "bg-red-500/10 text-red-500",
   };
 
+  const isLoading = ordersLoading || productsLoading || customersLoading;
+
   return (
     <AppLayout>
       <div className="space-y-6 max-w-5xl mx-auto pb-10 px-2" dir="rtl">
@@ -110,7 +139,6 @@ export default function Dashboard() {
               onClick={() => setIsNewOrderOpen(true)}
               className="flex-1 md:flex-initial px-5 py-3.5 gradient-primary text-primary-container-foreground rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all text-sm shadow-md"
             >
-              <Plus className="w-5 h-5" />
               <span>إضافة طلب سريع</span>
             </button>
             <button
@@ -124,19 +152,23 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Stats Section */}
+        {/* Readiness Checklist */}
+        <ReadinessChecklist data={checklistData} />
+
+        {/* Quick Stats */}
+        <QuickStats data={quickStatsData} isLoading={isLoading} />
+
+        {/* Today's Stats Section */}
         {isLoading ? (
           <div className="flex justify-center py-8">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {/* Orders Today */}
             <div className="bg-surface-container-low rounded-xl p-5 border border-outline-variant/10 shadow-sm">
               <span className="text-on-surface-variant text-xs font-bold block mb-2">طلبات اليوم</span>
               <p className="text-3xl font-black text-on-surface tabular-nums">{stats.todayOrdersCount}</p>
             </div>
-            {/* Sales Today */}
             <div className="bg-surface-container-low rounded-xl p-5 border border-outline-variant/10 shadow-sm">
               <span className="text-on-surface-variant text-xs font-bold block mb-2">مبيعات اليوم</span>
               <div className="flex items-baseline gap-1.5">
@@ -146,13 +178,15 @@ export default function Dashboard() {
                 <span className="text-xs text-primary font-bold">ر.س</span>
               </div>
             </div>
-            {/* Pending Orders */}
             <div className="bg-surface-container-low rounded-xl p-5 border border-outline-variant/10 shadow-sm">
               <span className="text-on-surface-variant text-xs font-bold block mb-2">الطلبات المعلقة</span>
               <p className="text-3xl font-black text-primary tabular-nums">{stats.pendingOrders}</p>
             </div>
           </div>
         )}
+
+        {/* Quick Actions */}
+        <QuickActions />
 
         {/* Quick Search */}
         <form onSubmit={handleSearch} className="bg-surface-container-low p-4 rounded-xl border border-outline-variant/10 shadow-sm">

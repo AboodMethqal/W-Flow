@@ -1,16 +1,15 @@
 import { useState, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Package, Image as ImageIcon, ArrowRight, Search, Store, ShoppingBag } from "lucide-react";
+import { Package, Image as ImageIcon, ArrowRight, Search, Store, ShoppingBag, MapPin, Phone } from "lucide-react";
 import { Loader2 } from "lucide-react";
 import { usePublicProducts } from "@/hooks/usePublicProducts";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 
 export default function StorePage() {
   const { slug } = useParams<{ slug: string }>();
   const { data, isLoading, error } = usePublicProducts(slug);
   const products = data?.products ?? [];
-  const workspaceName = data?.workspaceName ?? "";
+  const store = data?.store;
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
@@ -46,20 +45,34 @@ export default function StorePage() {
 
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
   const storeUrl = `${baseUrl}/store/${slug}`;
-  const tgDeepLink = `https://t.me/wflowAbod_bot?start=ws-${slug}`;
+  const tgDeepLink = `https://t.me/wflowAbod_bot?start=${slug}`;
+
+  const socialPlatforms: Record<string, { label: string; icon: string }> = {
+    instagram: { label: "إنستقرام", icon: "📸" },
+    facebook: { label: "فيسبوك", icon: "📘" },
+    twitter: { label: "تويتر", icon: "🐦" },
+    tiktok: { label: "تيك توك", icon: "🎵" },
+    whatsapp: { label: "واتساب", icon: "💬" },
+  };
 
   return (
     <div className="min-h-screen bg-background" dir="rtl">
       {/* Hero / Header */}
       <header className="bg-gradient-to-br from-primary/5 via-background to-background border-b border-outline-variant/10">
         <div className="max-w-5xl mx-auto px-4 py-8">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-12 h-12 gradient-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
-              <Store className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-black text-on-surface font-headline">
-                {workspaceName || "المتجر"}
+          <div className="flex items-center gap-4 mb-3">
+            {store?.logoUrl ? (
+              <div className="w-14 h-14 rounded-2xl overflow-hidden border border-outline-variant/10 flex-shrink-0 shadow-sm">
+                <img src={store.logoUrl} alt={store.workspaceName} className="w-full h-full object-cover" />
+              </div>
+            ) : (
+              <div className="w-14 h-14 gradient-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 flex-shrink-0">
+                <Store className="w-7 h-7 text-primary-foreground" />
+              </div>
+            )}
+            <div className="min-w-0">
+              <h1 className="text-2xl font-black text-on-surface font-headline truncate">
+                {store?.workspaceName || "المتجر"}
               </h1>
               <p className="text-sm text-on-surface-variant/60">
                 {products.length} {products.length === 1 ? "منتج" : "منتجات"} متاحة
@@ -67,7 +80,48 @@ export default function StorePage() {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-3 items-center mt-4">
+          {store?.description && (
+            <p className="text-sm text-on-surface-variant/70 leading-relaxed max-w-lg mb-3">
+              {store.description}
+            </p>
+          )}
+
+          <div className="flex flex-wrap gap-2 items-center text-xs text-on-surface-variant/60 mb-4">
+            {store?.phone && (
+              <span className="flex items-center gap-1" dir="ltr">
+                <Phone className="w-3 h-3" />
+                {store.phone}
+              </span>
+            )}
+            {store?.address && (
+              <span className="flex items-center gap-1">
+                <MapPin className="w-3 h-3" />
+                {store.address}
+              </span>
+            )}
+          </div>
+
+          {store?.socialLinks && Object.entries(store.socialLinks).filter(([, v]) => v).length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {Object.entries(store.socialLinks).map(([key, value]) => {
+                if (!value) return null;
+                const platform = socialPlatforms[key];
+                return (
+                  <a
+                    key={key}
+                    href={value}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-surface-container-high hover:bg-surface-container-highest rounded-lg text-xs font-bold text-on-surface-variant transition-colors"
+                  >
+                    {platform?.icon ?? "🔗"} {platform?.label ?? key}
+                  </a>
+                );
+              })}
+            </div>
+          )}
+
+          <div className="flex flex-wrap gap-3 items-center">
             <a href={tgDeepLink}
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
               <ShoppingBag className="w-4 h-4" />
@@ -116,7 +170,7 @@ export default function StorePage() {
       <main className="max-w-5xl mx-auto px-4 py-8">
         {isLoading ? (
           <div className="flex justify-center py-16"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
-        ) : error ? (
+        ) : error || !data ? (
           <div className="text-center py-16 space-y-3">
             <div className="w-16 h-16 bg-destructive/10 rounded-2xl flex items-center justify-center mx-auto">
               <Package className="w-8 h-8 text-destructive/50" />

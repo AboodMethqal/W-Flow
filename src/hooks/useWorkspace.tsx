@@ -8,6 +8,10 @@ interface Workspace {
   slug: string;
   owner_id: string;
   logo_url?: string;
+  description?: string;
+  phone?: string;
+  address?: string;
+  social_links?: Record<string, string>;
 }
 
 interface WorkspaceMember {
