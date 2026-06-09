@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export default function AuthPage() {
   const { user, loading, signIn, signUp, resetPassword } = useAuth();
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [showReset, setShowReset] = useState(false);
 
@@ -19,8 +19,6 @@ export default function AuthPage() {
       </div>
     );
   }
-
-  if (user) return <Navigate to="/" replace />;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,11 +33,31 @@ export default function AuthPage() {
         }
       } else if (isLogin) {
         const { error } = await signIn(email, password);
-        if (error) toast.error(error.message);
+        if (error) {
+          if (error.message.toLowerCase().includes("email not confirmed")) {
+            toast.error("لم يتم تأكيد بريدك الإلكتروني بعد. تحقق من بريدك وافتح رابط التفعيل.", {
+              duration: 6000,
+            });
+          } else {
+            toast.error(error.message);
+          }
+        } else {
+          navigate("/app", { replace: true });
+        }
       } else {
-        const { error } = await signUp(email, password, fullName);
-        if (error) toast.error(error.message);
-        else toast.success("تم إنشاء الحساب! تحقق من بريدك الإلكتروني");
+        const { error, needsEmailConfirmation } = await signUp(email, password);
+        if (error) {
+          toast.error(error.message);
+        } else if (needsEmailConfirmation) {
+          toast.success("تم إنشاء الحساب! تحقق من بريدك الإلكتروني لتفعيله، ثم سجّل دخولك.", {
+            duration: 6000,
+          });
+          setIsLogin(true);
+          setPassword("");
+        } else {
+          toast.success("تم إنشاء الحساب بنجاح!");
+          navigate("/app", { replace: true });
+        }
       }
     } finally {
       setSubmitting(false);
@@ -56,24 +74,12 @@ export default function AuthPage() {
           </div>
           <h1 className="text-3xl font-black text-primary tracking-tighter font-headline">W-Flow</h1>
           <p className="text-on-surface-variant text-sm mt-2">
-            {showReset ? "أدخل بريدك لإعادة تعيين كلمة المرور" : isLogin ? "سجّل دخولك للمتابعة" : "أنشئ حسابك الجديد"}
+            {showReset ? "أدخل بريدك لإعادة تعيين كلمة المرور" : isLogin ? "مرحباً بك! سجّل دخولك للمتابعة" : "أنشئ حسابك الجديد للبدء"}
           </p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="bg-surface-container-low rounded-2xl p-6 space-y-4">
-          {!isLogin && !showReset && (
-            <div>
-              <label className="text-xs font-bold text-on-surface-variant block mb-2">الاسم الكامل</label>
-              <input
-                required
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="w-full bg-surface-container-highest rounded-xl px-4 py-3 text-sm text-on-surface focus:outline-none focus:ring-1 focus:ring-primary/30 placeholder:text-on-surface-variant/40"
-                placeholder="أحمد محمد"
-              />
-            </div>
-          )}
           <div>
             <label className="text-xs font-bold text-on-surface-variant block mb-2">البريد الإلكتروني</label>
             <input

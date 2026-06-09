@@ -7,8 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
@@ -24,6 +22,7 @@ export type Database = {
           phone: string
           updated_at: string
           user_id: string
+          workspace_id: string | null
         }
         Insert: {
           created_at?: string
@@ -34,6 +33,7 @@ export type Database = {
           phone: string
           updated_at?: string
           user_id: string
+          workspace_id?: string | null
         }
         Update: {
           created_at?: string
@@ -44,8 +44,17 @@ export type Database = {
           phone?: string
           updated_at?: string
           user_id?: string
+          workspace_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "customers_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       order_items: {
         Row: {
@@ -85,7 +94,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       orders: {
@@ -105,6 +114,7 @@ export type Database = {
           status: Database["public"]["Enums"]["order_status"]
           updated_at: string
           user_id: string
+          workspace_id: string | null
         }
         Insert: {
           address?: string | null
@@ -122,6 +132,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["order_status"]
           updated_at?: string
           user_id: string
+          workspace_id?: string | null
         }
         Update: {
           address?: string | null
@@ -139,6 +150,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["order_status"]
           updated_at?: string
           user_id?: string
+          workspace_id?: string | null
         }
         Relationships: [
           {
@@ -148,6 +160,13 @@ export type Database = {
             referencedRelation: "customers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "orders_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          }
         ]
       }
       profiles: {
@@ -179,6 +198,180 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      settings: {
+        Row: {
+          id: string
+          user_id: string
+          store_url: string | null
+          whapi_token: string | null
+          whapi_channel_id: string | null
+          auto_reply_enabled: boolean
+          daily_report_enabled: boolean
+          daily_report_phone: string | null
+          created_at: string
+          updated_at: string
+          auto_reply_message: string | null
+          msg_delivering: string | null
+          msg_completed: string | null
+          business_name: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          store_url?: string | null
+          whapi_token?: string | null
+          whapi_channel_id?: string | null
+          auto_reply_enabled?: boolean
+          daily_report_enabled?: boolean
+          daily_report_phone?: string | null
+          created_at?: string
+          updated_at?: string
+          auto_reply_message?: string | null
+          msg_delivering?: string | null
+          msg_completed?: string | null
+          business_name?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          store_url?: string | null
+          whapi_token?: string | null
+          whapi_channel_id?: string | null
+          auto_reply_enabled?: boolean
+          daily_report_enabled?: boolean
+          daily_report_phone?: string | null
+          created_at?: string
+          updated_at?: string
+          auto_reply_message?: string | null
+          msg_delivering?: string | null
+          msg_completed?: string | null
+          business_name?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "settings_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: true
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      workspaces: {
+        Row: {
+          id: string
+          owner_id: string
+          name: string
+          slug: string
+          logo_url: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          owner_id: string
+          name: string
+          slug: string
+          logo_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          owner_id?: string
+          name?: string
+          slug?: string
+          logo_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      workspace_members: {
+        Row: {
+          id: string
+          workspace_id: string
+          user_id: string
+          role: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          workspace_id: string
+          user_id: string
+          role?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          workspace_id?: string
+          user_id?: string
+          role?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_members_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      products: {
+        Row: {
+          id: string
+          workspace_id: string
+          name: string
+          description: string | null
+          price: number
+          sku: string | null
+          category: string | null
+          image_url: string | null
+          is_available: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          workspace_id: string
+          name: string
+          description?: string | null
+          price?: number
+          sku?: string | null
+          category?: string | null
+          image_url?: string | null
+          is_available?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          workspace_id?: string
+          name?: string
+          description?: string | null
+          price?: number
+          sku?: string | null
+          category?: string | null
+          image_url?: string | null
+          is_available?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {

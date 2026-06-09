@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
+import { useWorkspace } from "./useWorkspace";
 import { subDays, startOfDay } from "date-fns";
 import type { Order } from "./useOrders";
 
@@ -32,6 +33,7 @@ function calcStats(orders: Order[]): DashboardStats {
 
 export function useDashboardStats(orders: Order[]) {
   const { user } = useAuth();
+  const { currentWorkspace } = useWorkspace();
 
   const todayStart = useMemo(() => startOfDay(new Date()).toISOString(), []);
   const weekAgoStart = useMemo(() => subDays(startOfDay(new Date()), 7).toISOString(), []);
@@ -39,33 +41,37 @@ export function useDashboardStats(orders: Order[]) {
 
   // New customers today
   const { data: newCustomersCount = 0 } = useQuery({
-    queryKey: ["dashboard-new-customers", user?.id, todayStart],
+    queryKey: ["dashboard-new-customers", currentWorkspace?.id, todayStart],
     queryFn: async () => {
+      if (!currentWorkspace?.id) return 0;
+
       const { count, error } = await supabase
         .from("customers")
         .select("id", { count: "exact", head: true })
-        .eq("user_id", user!.id)
+        .eq("workspace_id", currentWorkspace.id)
         .gte("created_at", todayStart);
       if (error) throw error;
       return count ?? 0;
     },
-    enabled: !!user,
+    enabled: !!user && !!currentWorkspace?.id,
   });
 
   // Last week orders (for prevStats comparison)
   const { data: lastWeekOrders = [] } = useQuery({
-    queryKey: ["dashboard-prev-orders", user?.id, weekAgoStart, twoWeeksAgoStart],
+    queryKey: ["dashboard-prev-orders", currentWorkspace?.id, weekAgoStart, twoWeeksAgoStart],
     queryFn: async () => {
+      if (!currentWorkspace?.id) return [];
+
       const { data, error } = await supabase
         .from("orders")
         .select("*")
-        .eq("user_id", user!.id)
+        .eq("workspace_id", currentWorkspace.id)
         .gte("created_at", twoWeeksAgoStart)
         .lt("created_at", weekAgoStart);
       if (error) throw error;
       return data as Order[];
     },
-    enabled: !!user,
+    enabled: !!user && !!currentWorkspace?.id,
   });
 
   const stats: DashboardStats = useMemo(() => {

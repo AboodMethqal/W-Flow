@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
+import { useWorkspace } from "./useWorkspace";
 
 /**
  * Returns a function that resolves a customer_id by phone number.
@@ -8,13 +9,16 @@ import { useAuth } from "./useAuth";
  */
 export function useResolveCustomer() {
   const { user } = useAuth();
+  const { currentWorkspace } = useWorkspace();
 
   const resolveCustomer = async (phone: string, name: string): Promise<string> => {
-    // 1. Look up existing customer by phone for this user
+    if (!currentWorkspace?.id) throw new Error("No workspace selected");
+
+    // 1. Look up existing customer by phone for this workspace
     const { data: existing, error: lookupError } = await supabase
       .from("customers")
       .select("id")
-      .eq("user_id", user!.id)
+      .eq("workspace_id", currentWorkspace.id)
       .eq("phone", phone)
       .maybeSingle();
 
@@ -24,7 +28,7 @@ export function useResolveCustomer() {
     // 2. Not found — create a new customer
     const { data: created, error: createError } = await supabase
       .from("customers")
-      .insert({ user_id: user!.id, name, phone })
+      .insert({ user_id: user!.id, workspace_id: currentWorkspace.id, name, phone })
       .select("id")
       .single();
 

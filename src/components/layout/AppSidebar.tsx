@@ -3,12 +3,8 @@ import { useLocation, Link, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   ClipboardCheck,
-  Users,
-  BarChart3,
+  Package,
   Settings,
-  PlusCircle,
-  Headphones,
-  UserCircle,
   Menu,
   X,
   LogOut,
@@ -16,15 +12,14 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 
 const navItems = [
-  { label: "نظرة عامة", icon: LayoutDashboard, path: "/" },
-  { label: "لوحة الطلبات الذكية", icon: ClipboardCheck, path: "/orders" },
-  { label: "قاعدة بيانات العملاء", icon: Users, path: "/customers" },
-  { label: "التحليلات", icon: BarChart3, path: "/analytics" },
+  { label: "الرئيسية", icon: LayoutDashboard, path: "/app" },
+  { label: "لوحة الطلبات", icon: ClipboardCheck, path: "/orders" },
+  { label: "المنتجات", icon: Package, path: "/products" },
   { label: "الإعدادات", icon: Settings, path: "/settings" },
 ];
 
 interface AppSidebarProps {
-  onNewOrder: () => void;
+  onNewOrder?: () => void;
 }
 
 export default function AppSidebar({ onNewOrder }: AppSidebarProps) {
@@ -33,8 +28,7 @@ export default function AppSidebar({ onNewOrder }: AppSidebarProps) {
   const { user, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const displayName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "مستخدم";
-  const initial = displayName.charAt(0).toUpperCase();
+  const displayName = user?.email?.split("@")[0] || "تاجر";
 
   const handleSignOut = async () => {
     setMobileOpen(false);
@@ -54,7 +48,7 @@ export default function AppSidebar({ onNewOrder }: AppSidebarProps) {
             W-Flow
           </h1>
           <p className="text-[10px] text-on-surface-variant/60 uppercase tracking-widest mt-1">
-            CRM & Order Management
+            إدارة طلبات التاجر
           </p>
         </div>
       </div>
@@ -68,56 +62,34 @@ export default function AppSidebar({ onNewOrder }: AppSidebarProps) {
               key={item.path}
               to={item.path}
               onClick={() => setMobileOpen(false)}
-              className={`flex items-center gap-4 px-4 py-3 transition-all duration-200 active:scale-95 ${
+              className={`flex items-center gap-4 px-4 py-3.5 transition-all duration-200 active:scale-95 rounded-xl ${
                 isActive
-                  ? "text-primary border-r-4 border-primary-container bg-gradient-to-l from-primary-container/10 to-transparent"
-                  : "text-on-surface/60 hover:text-on-surface hover:bg-surface-container-highest rounded-xl"
+                  ? "text-primary bg-primary/10 font-bold"
+                  : "text-on-surface/60 hover:text-on-surface hover:bg-surface-container-highest"
               }`}
             >
               <item.icon className="w-5 h-5" />
-              <span className="font-medium text-sm">{item.label}</span>
+              <span className="text-sm">{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
       {/* Bottom */}
-      <div className="px-3 mt-auto space-y-2">
-        <button
-          onClick={() => {
-            onNewOrder();
-            setMobileOpen(false);
-          }}
-          className="w-full gradient-primary text-primary-container-foreground py-3 rounded-xl font-bold flex items-center justify-center gap-2 mb-6 shadow-lg hover:opacity-90 transition-opacity"
-        >
-          <PlusCircle className="w-5 h-5" />
-          <span>طلب جديد</span>
-        </button>
-        <Link
-          to="#"
-          className="flex items-center gap-4 px-4 py-3 text-on-surface/60 hover:text-on-surface transition-colors"
-        >
-          <Headphones className="w-5 h-5" />
-          <span className="text-sm">الدعم</span>
-        </Link>
-        <Link
-          to="/settings"
-          onClick={() => setMobileOpen(false)}
-          className="flex items-center gap-4 px-4 py-3 text-on-surface/60 hover:text-on-surface transition-colors rounded-xl hover:bg-surface-container-highest"
-        >
-          <UserCircle className="w-5 h-5" />
-          <div className="flex flex-col">
-            <span className="text-sm font-medium">{displayName}</span>
-            <span className="text-[10px] text-on-surface-variant truncate max-w-[130px]">{user?.email}</span>
+      <div className="px-3 mt-auto">
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-surface-container-highest">
+          <div className="flex flex-col min-w-0">
+            <span className="text-xs font-bold text-on-surface truncate">{displayName}</span>
+            <span className="text-[10px] text-on-surface-variant truncate max-w-[120px]">{user?.email}</span>
           </div>
-        </Link>
-        <button
-          onClick={handleSignOut}
-          className="w-full flex items-center gap-4 px-4 py-3 text-destructive hover:bg-destructive/10 transition-colors rounded-xl"
-        >
-          <LogOut className="w-5 h-5" />
-          <span className="text-sm font-medium">تسجيل الخروج</span>
-        </button>
+          <button
+            onClick={handleSignOut}
+            className="text-destructive hover:bg-destructive/10 p-2 rounded-lg transition-colors"
+            title="تسجيل الخروج"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
   );

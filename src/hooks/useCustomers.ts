@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
+import { useWorkspace } from "./useWorkspace";
 import type { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 
 export type Customer = Tables<"customers">;
@@ -22,30 +23,38 @@ export interface CustomerWithStats {
 
 export function useCustomers() {
   const { user } = useAuth();
+  const { currentWorkspace } = useWorkspace();
   const queryClient = useQueryClient();
 
   const customersQuery = useQuery({
-    queryKey: ["customers", user?.id],
+    queryKey: ["customers", currentWorkspace?.id],
     queryFn: async () => {
+      if (!currentWorkspace?.id) return [];
+
       const { data, error } = await supabase
-        .rpc("get_customers_with_stats", { p_user_id: user!.id });
+        .from("customers")
+        .select("*")
+        .eq("workspace_id", currentWorkspace.id)
+        .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as CustomerWithStats[];
+      return (data ?? []) as Customer[];
     },
-    enabled: !!user,
+    enabled: !!user && !!currentWorkspace?.id,
   });
 
   const addCustomer = useMutation({
-    mutationFn: async (customer: Omit<CustomerInsert, "user_id">) => {
+    mutationFn: async (customer: Omit<CustomerInsert, "user_id" | "workspace_id">) => {
+      if (!currentWorkspace?.id) throw new Error("No workspace selected");
+
       const { data, error } = await supabase
         .from("customers")
-        .insert({ ...customer, user_id: user!.id })
+        .insert({ ...customer, user_id: user!.id, workspace_id: currentWorkspace.id })
         .select()
         .single();
       if (error) throw error;
       return data;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["customers"] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["customers", currentWorkspace?.id] }),
   });
 
   const updateCustomer = useMutation({
@@ -56,7 +65,7 @@ export function useCustomers() {
         .eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["customers"] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["customers", currentWorkspace?.id] }),
   });
 
   const deleteCustomer = useMutation({
@@ -67,7 +76,7 @@ export function useCustomers() {
         .eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["customers"] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["customers", currentWorkspace?.id] }),
   });
 
   return {

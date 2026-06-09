@@ -4,17 +4,27 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import { WorkspaceProvider } from "@/hooks/useWorkspace";
 import Dashboard from "./pages/Dashboard";
 import OrdersKanban from "./pages/OrdersKanban";
 import OrderDetails from "./pages/OrderDetails";
-import CustomersPage from "./pages/Customers";
-import AnalyticsPage from "./pages/Analytics";
+import ProductsPage from "./pages/Products";
+import StorePage from "./pages/StorePage";
+import ProductPage from "./pages/ProductPage";
+import AddOrderPage from "./pages/AddOrder";
 import SettingsPage from "./pages/Settings";
 import AuthPage from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { ReactNode } from "react";
 
 const queryClient = new QueryClient();
+
+function CatalogRedirect() {
+  const params = new URLSearchParams(window.location.search);
+  // Extract slug from URL path: /catalog/:slug
+  const slug = window.location.pathname.split("/catalog/")[1]?.split("/")[0] || params.get("slug") || "";
+  return <Navigate to={`/store/${slug}`} replace />;
+}
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -31,13 +41,17 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
 
 const AppRoutes = () => (
   <Routes>
+    <Route path="/" element={<Navigate to="/auth" replace />} />
     <Route path="/auth" element={<AuthPage />} />
-    <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+    <Route path="/app" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
     <Route path="/orders" element={<ProtectedRoute><OrdersKanban /></ProtectedRoute>} />
+    <Route path="/orders/new" element={<ProtectedRoute><AddOrderPage /></ProtectedRoute>} />
     <Route path="/orders/:id" element={<ProtectedRoute><OrderDetails /></ProtectedRoute>} />
-    <Route path="/customers" element={<ProtectedRoute><CustomersPage /></ProtectedRoute>} />
-    <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
+    <Route path="/products" element={<ProtectedRoute><ProductsPage /></ProtectedRoute>} />
     <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+    <Route path="/store/:slug" element={<StorePage />} />
+    <Route path="/store/:slug/product/:id" element={<ProductPage />} />
+    <Route path="/catalog/:slug" element={<CatalogRedirect />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
@@ -45,13 +59,15 @@ const AppRoutes = () => (
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </TooltipProvider>
+      <WorkspaceProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </TooltipProvider>
+      </WorkspaceProvider>
     </AuthProvider>
   </QueryClientProvider>
 );

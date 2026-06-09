@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
+import { useWorkspace } from "./useWorkspace";
 
 export interface UserSettings {
   id?: string;
@@ -31,31 +32,35 @@ export const defaults: UserSettings = {
 
 export function useSettings() {
   const { user } = useAuth();
+  const { currentWorkspace } = useWorkspace();
   const queryClient = useQueryClient();
 
   const { data: settings = defaults, isLoading } = useQuery({
-    queryKey: ["settings", user?.id],
+    queryKey: ["settings", currentWorkspace?.id],
     queryFn: async () => {
+      if (!currentWorkspace?.id) return defaults;
+
       const { data } = await supabase
         .from("settings")
         .select("*")
-        .eq("user_id", user!.id)
+        .eq("workspace_id", currentWorkspace.id)
         .maybeSingle();
       if (!data) return defaults;
-      // Merge with defaults so new fields always have a value
       return { ...defaults, ...data } as UserSettings;
     },
-    enabled: !!user,
+    enabled: !!user && !!currentWorkspace?.id,
   });
 
   const saveSettings = useMutation({
     mutationFn: async (updates: Partial<UserSettings>) => {
+      if (!currentWorkspace?.id) throw new Error("No workspace selected");
+
       const { error } = await supabase
         .from("settings")
-        .upsert({ ...updates, user_id: user!.id }, { onConflict: "user_id" });
+        .upsert({ ...updates, user_id: user!.id, workspace_id: currentWorkspace.id }, { onConflict: "workspace_id" });
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["settings"] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["settings", currentWorkspace?.id] }),
   });
 
   return { settings, isLoading, saveSettings };
