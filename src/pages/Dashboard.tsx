@@ -49,7 +49,7 @@ export default function Dashboard() {
   }), [products.length, customers.length, orders.length, stats.pendingOrders, stats.completedOrders]);
 
   const checklistData = useMemo(() => ({
-    storeInfo: !!(currentWorkspace?.name && (currentWorkspace as any).description),
+    storeInfo: !!(currentWorkspace?.name && currentWorkspace.description),
     productsAdded: products.length > 0,
     productImages: products.some((p) => !!p.image_url),
     telegramActive: orders.length >= 0,

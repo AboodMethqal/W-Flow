@@ -93,7 +93,7 @@ function getProductUrl(slug: string, productId: string): string {
 }
 
 function formatCatalogSection(catalog: CatalogProduct[]): string {
-  if (!catalog.length) return "⚠️ المتجر لم يضف منتجات بعد. اسأل العميل وش يطلب وسجل الطلب يدوياً.";
+  if (!catalog.length) return "لا توجد منتجات مسجلة في المتجر بعد. اسأل العميل وش يطلب وسجل الطلب يدوياً.";
 
   const available = catalog.filter((p) => p.is_available);
   const unavailable = catalog.filter((p) => !p.is_available);
@@ -261,7 +261,6 @@ async function buildMessages(
       .from("products")
       .select("id, name, price, category, is_available, description, image_url")
       .eq("workspace_id", workspaceId)
-      .eq("is_available", true)
       .order("name", { ascending: true }),
     supabase
       .from("workspaces")

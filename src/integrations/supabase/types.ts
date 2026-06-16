@@ -268,6 +268,10 @@ export type Database = {
           name: string
           slug: string
           logo_url: string | null
+          description: string | null
+          phone: string | null
+          address: string | null
+          social_links: Json | null
           created_at: string
           updated_at: string
         }
@@ -277,6 +281,10 @@ export type Database = {
           name: string
           slug: string
           logo_url?: string | null
+          description?: string | null
+          phone?: string | null
+          address?: string | null
+          social_links?: Json | null
           created_at?: string
           updated_at?: string
         }
@@ -286,6 +294,10 @@ export type Database = {
           name?: string
           slug?: string
           logo_url?: string | null
+          description?: string | null
+          phone?: string | null
+          address?: string | null
+          social_links?: Json | null
           created_at?: string
           updated_at?: string
         }

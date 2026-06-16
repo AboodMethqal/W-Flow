@@ -10,6 +10,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useWorkspace } from "@/hooks/useWorkspace";
 
 const navItems = [
   { label: "الرئيسية", icon: LayoutDashboard, path: "/app" },
@@ -26,9 +27,10 @@ export default function AppSidebar({ onNewOrder }: AppSidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const { currentWorkspace } = useWorkspace();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const displayName = user?.email?.split("@")[0] || "تاجر";
+  const displayName = currentWorkspace?.name || user?.email?.split("@")[0] || "تاجر";
 
   const handleSignOut = async () => {
     setMobileOpen(false);

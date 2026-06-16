@@ -1,6 +1,6 @@
 -- Products table for merchant catalog (workspace-scoped)
 
-CREATE TABLE public.products (
+CREATE TABLE IF NOT EXISTS public.products (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
@@ -14,34 +14,51 @@ CREATE TABLE public.products (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_products_workspace ON public.products(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_products_workspace ON public.products(workspace_id);
 
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Workspace members can view products"
-  ON public.products FOR SELECT
-  USING (workspace_id IN (
-    SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()
-  ));
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'products' AND policyname = 'Workspace members can view products') THEN
+    CREATE POLICY "Workspace members can view products"
+      ON public.products FOR SELECT
+      USING (workspace_id IN (
+        SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()
+      ));
+  END IF;
+END $$;
 
-CREATE POLICY "Workspace members can insert products"
-  ON public.products FOR INSERT
-  WITH CHECK (workspace_id IN (
-    SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()
-  ));
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'products' AND policyname = 'Workspace members can insert products') THEN
+    CREATE POLICY "Workspace members can insert products"
+      ON public.products FOR INSERT
+      WITH CHECK (workspace_id IN (
+        SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()
+      ));
+  END IF;
+END $$;
 
-CREATE POLICY "Workspace members can update products"
-  ON public.products FOR UPDATE
-  USING (workspace_id IN (
-    SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()
-  ));
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'products' AND policyname = 'Workspace members can update products') THEN
+    CREATE POLICY "Workspace members can update products"
+      ON public.products FOR UPDATE
+      USING (workspace_id IN (
+        SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()
+      ));
+  END IF;
+END $$;
 
-CREATE POLICY "Workspace members can delete products"
-  ON public.products FOR DELETE
-  USING (workspace_id IN (
-    SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()
-  ));
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'products' AND policyname = 'Workspace members can delete products') THEN
+    CREATE POLICY "Workspace members can delete products"
+      ON public.products FOR DELETE
+      USING (workspace_id IN (
+        SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()
+      ));
+  END IF;
+END $$;
 
+DROP TRIGGER IF EXISTS update_products_updated_at ON public.products;
 CREATE TRIGGER update_products_updated_at
   BEFORE UPDATE ON public.products
   FOR EACH ROW

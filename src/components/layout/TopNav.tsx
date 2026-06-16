@@ -1,16 +1,18 @@
 import { useState, useRef, useEffect } from "react";
 import { Search, LogOut, Settings } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useWorkspace } from "@/hooks/useWorkspace";
 import { useNavigate } from "react-router-dom";
 
 export default function TopNav() {
   const { user, signOut } = useAuth();
+  const { currentWorkspace } = useWorkspace();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const ref = useRef<HTMLDivElement>(null);
 
-  const displayName = user?.email?.split("@")[0] || "تاجر";
+  const displayName = currentWorkspace?.name || user?.email?.split("@")[0] || "تاجر";
 
   // Close dropdown on outside click
   useEffect(() => {

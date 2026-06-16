@@ -30,8 +30,7 @@ export function usePublicProducts(slug: string | undefined) {
         .select("*")
         .eq("workspace_id", ws.id)
         .eq("is_available", true)
-        .order("category", { ascending: true })
-        .order("name", { ascending: true });
+        .order("created_at", { ascending: false });
       return {
         store: {
           workspaceName: ws.name,
