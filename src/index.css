@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;700;800&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -72,10 +72,66 @@
   body {
     @apply bg-background text-foreground font-body antialiased;
   }
+}
 
-  h1, h2, h3, .brand-font {
-    font-family: 'Manrope', sans-serif;
-  }
+/* Storefront light theme */
+.storefront {
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 217 89% 53%;
+  --primary-foreground: 0 0% 100%;
+  --primary-container: 217 89% 60%;
+  --primary-container-foreground: 0 0% 100%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222 47% 11%;
+  --secondary-container: 210 40% 93%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222 47% 11%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 217 89% 53%;
+  --radius: 0.75rem;
+
+  --surface: 0 0% 100%;
+  --surface-dim: 210 40% 98%;
+  --surface-bright: 0 0% 100%;
+  --surface-container-lowest: 0 0% 100%;
+  --surface-container-low: 210 40% 98%;
+  --surface-container: 210 40% 96%;
+  --surface-container-high: 214 32% 91%;
+  --surface-container-highest: 214 32% 91%;
+  --surface-tint: 217 89% 53%;
+  --on-surface: 222 47% 11%;
+  --on-surface-variant: 215 16% 47%;
+  --outline: 214 32% 91%;
+  --outline-variant: 214 32% 91%;
+  --inverse-surface: 222 47% 11%;
+  --inverse-on-surface: 210 40% 98%;
+
+  --tertiary: 217 89% 95%;
+  --tertiary-container: 217 89% 95%;
+  --error-container: 0 90% 95%;
+
+  --whatsapp: 142 71% 45%;
+
+  --gradient-primary: linear-gradient(135deg, #2563EB, #3B82F6);
+  --shadow-primary: 0px 20px 40px rgba(37, 99, 235, 0.1);
+  --shadow-float: 0px 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+.storefront,
+.storefront h1,
+.storefront h2,
+.storefront h3 {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
 }
 
 @layer utilities {
@@ -83,9 +139,16 @@
     @apply bg-surface-container/80 backdrop-blur-xl;
   }
   .gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--primary-container)), hsl(var(--primary)));
+    background: var(--gradient-primary);
   }
   .tabular-nums {
     font-variant-numeric: tabular-nums;
+  }
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
   }
 }
