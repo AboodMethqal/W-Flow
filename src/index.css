@@ -30,7 +30,6 @@
     --ring: 161 64% 60%;
     --radius: 0.75rem;
 
-    /* Emerald Ledger surface system */
     --surface: 200 43% 7%;
     --surface-dim: 200 43% 7%;
     --surface-bright: 203 14% 22%;
@@ -47,36 +46,23 @@
     --inverse-surface: 207 52% 90%;
     --inverse-on-surface: 204 24% 18%;
 
-    /* Tertiary / error */
     --tertiary: 10 100% 83%;
     --tertiary-container: 8 60% 64%;
     --error-container: 0 100% 29%;
-
-    /* WhatsApp green */
     --whatsapp: 142 70% 49%;
 
-    /* Gradient tokens */
     --gradient-primary: linear-gradient(135deg, hsl(162 100% 33%), hsl(161 64% 60%));
     --shadow-primary: 0px 20px 40px hsla(161, 64%, 60%, 0.1);
     --shadow-float: 0px 20px 40px rgba(0, 0, 0, 0.4);
   }
 
-  * {
-    @apply border-border;
-  }
-
-  html {
-    direction: rtl;
-  }
-
-  body {
-    @apply bg-background text-foreground font-body antialiased;
-  }
+  * { @apply border-border; }
+  html { direction: rtl; }
+  body { @apply bg-background text-foreground font-body antialiased; }
 }
 
-/* Storefront premium light theme */
 .storefront {
-  --background: 220 14% 96%;
+  --background: 210 20% 98%;
   --foreground: 222 47% 11%;
   --card: 0 0% 100%;
   --card-foreground: 222 47% 11%;
@@ -101,13 +87,13 @@
   --radius: 0.75rem;
 
   --surface: 0 0% 100%;
-  --surface-dim: 220 14% 96%;
+  --surface-dim: 210 20% 98%;
   --surface-bright: 0 0% 100%;
-  --surface-container-lowest: 220 14% 96%;
-  --surface-container-low: 220 14% 96%;
-  --surface-container: 220 14% 92%;
-  --surface-container-high: 220 14% 88%;
-  --surface-container-highest: 220 10% 84%;
+  --surface-container-lowest: 210 20% 98%;
+  --surface-container-low: 210 20% 98%;
+  --surface-container: 210 20% 94%;
+  --surface-container-high: 210 20% 90%;
+  --surface-container-highest: 210 15% 86%;
   --surface-tint: 217 89% 53%;
   --on-surface: 222 47% 11%;
   --on-surface-variant: 215 16% 47%;
@@ -119,7 +105,6 @@
   --tertiary: 217 89% 95%;
   --tertiary-container: 217 89% 95%;
   --error-container: 0 90% 95%;
-
   --whatsapp: 142 71% 45%;
 
   --gradient-primary: linear-gradient(135deg, #2563EB, #3B82F6);
@@ -134,30 +119,10 @@
   font-family: 'IBM Plex Sans Arabic', sans-serif;
 }
 
-/* Storefront section styling */
-.storefront .section-alt {
-  background-color: hsl(220 14% 96%);
-}
-
-.storefront .section-white {
-  background-color: hsl(0 0% 100%);
-}
-
 @layer utilities {
-  .glass {
-    @apply bg-surface-container/80 backdrop-blur-xl;
-  }
-  .gradient-primary {
-    background: var(--gradient-primary);
-  }
-  .tabular-nums {
-    font-variant-numeric: tabular-nums;
-  }
-  .scrollbar-none {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .scrollbar-none::-webkit-scrollbar {
-    display: none;
-  }
+  .glass { @apply bg-surface-container/80 backdrop-blur-xl; }
+  .gradient-primary { background: var(--gradient-primary); }
+  .tabular-nums { font-variant-numeric: tabular-nums; }
+  .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
 }
