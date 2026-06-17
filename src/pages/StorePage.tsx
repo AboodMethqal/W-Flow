@@ -14,21 +14,21 @@ type Product = Tables<"products">;
 
 function LoadingSkeleton() {
   return (
-    <div className="min-h-screen bg-white" dir="rtl">
-      <div className="max-w-6xl mx-auto px-4 py-12">
-        <div className="flex flex-col items-center gap-4 mb-8">
-          <div className="w-24 h-24 rounded-2xl bg-gray-100 animate-pulse" />
-          <div className="h-8 w-64 bg-gray-100 rounded-lg animate-pulse" />
-          <div className="h-4 w-48 bg-gray-100 rounded animate-pulse" />
+    <div className="min-h-screen bg-[#F4F6F9]" dir="rtl">
+      <div className="max-w-6xl mx-auto px-4 py-16">
+        <div className="flex flex-col items-center gap-5 mb-10">
+          <div className="w-28 h-28 rounded-2xl bg-white animate-pulse shadow-sm" />
+          <div className="h-10 w-72 bg-white rounded-xl animate-pulse shadow-sm" />
+          <div className="h-5 w-48 bg-white rounded-lg animate-pulse shadow-sm" />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="bg-white rounded-xl overflow-hidden border border-gray-100">
-              <div className="aspect-[4/3] bg-gray-50 animate-pulse" />
+            <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-sm">
+              <div className="aspect-square bg-gray-50 animate-pulse" />
               <div className="p-4 space-y-3">
                 <div className="h-4 w-3/4 bg-gray-50 rounded animate-pulse" />
                 <div className="h-3 w-full bg-gray-50 rounded animate-pulse" />
-                <div className="h-5 w-20 bg-gray-50 rounded animate-pulse" />
+                <div className="h-5 w-24 bg-gray-50 rounded animate-pulse" />
               </div>
             </div>
           ))}
@@ -40,15 +40,17 @@ function LoadingSkeleton() {
 
 function EmptyState({ onReset }: { onReset: () => void }) {
   return (
-    <div className="text-center py-20 space-y-4">
-      <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto">
-        <Search className="w-7 h-7 text-gray-300" />
+    <div className="text-center py-24 space-y-5">
+      <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
+        <Search className="w-8 h-8 text-gray-300" />
       </div>
-      <h3 className="text-gray-600 font-semibold">لا توجد نتائج</h3>
-      <p className="text-sm text-gray-400">حاول تغيير كلمات البحث أو إزالة التصفية</p>
+      <div>
+        <h3 className="text-gray-700 font-bold text-lg">لا توجد نتائج</h3>
+        <p className="text-sm text-gray-400 mt-1">حاول تغيير كلمات البحث أو إزالة التصفية</p>
+      </div>
       <button
         onClick={onReset}
-        className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-lg text-sm font-medium transition-all"
+        className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-md shadow-blue-500/20"
       >
         <X className="w-3.5 h-3.5" />
         إعادة تعيين
@@ -59,12 +61,14 @@ function EmptyState({ onReset }: { onReset: () => void }) {
 
 function NoProducts() {
   return (
-    <div className="text-center py-20 space-y-4">
-      <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto">
-        <Package className="w-7 h-7 text-gray-300" />
+    <div className="text-center py-24 space-y-5">
+      <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
+        <Package className="w-8 h-8 text-gray-300" />
       </div>
-      <h3 className="text-gray-600 font-semibold">لا توجد منتجات متاحة</h3>
-      <p className="text-sm text-gray-400">سيتم إضافة منتجات جديدة قريباً</p>
+      <div>
+        <h3 className="text-gray-700 font-bold text-lg">لا توجد منتجات متاحة</h3>
+        <p className="text-sm text-gray-400 mt-1">سيتم إضافة منتجات جديدة قريباً</p>
+      </div>
     </div>
   );
 }
@@ -127,20 +131,20 @@ export default function StorePage() {
 
   if (error || !data || !store) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center" dir="rtl">
-        <div className="text-center space-y-3">
+      <div className="min-h-screen bg-[#F4F6F9] flex items-center justify-center" dir="rtl">
+        <div className="text-center space-y-4 bg-white p-10 rounded-2xl shadow-sm border border-gray-100 max-w-sm mx-4">
           <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto">
             <Store className="w-8 h-8 text-red-300" />
           </div>
-          <p className="text-gray-600 font-semibold text-sm">عذراً، حدث خطأ في تحميل المتجر</p>
-          <p className="text-xs text-gray-400">قد يكون المتجر غير موجود أو حدثت مشكلة</p>
+          <p className="text-gray-700 font-bold">عذراً، حدث خطأ</p>
+          <p className="text-sm text-gray-400">قد يكون المتجر غير موجود أو حدثت مشكلة في الاتصال</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="storefront min-h-screen bg-white" dir="rtl">
+    <div className="storefront min-h-screen bg-[#F4F6F9]" dir="rtl">
       <HeroBanner
         store={store}
         slug={slug!}
@@ -148,13 +152,15 @@ export default function StorePage() {
         categoryCount={categories.length}
       />
 
-      {/* Categories Grid */}
+      {/* Categories */}
       {categories.length > 0 && (
-        <section className="border-b border-gray-100 bg-gray-50/50">
-          <div className="max-w-6xl mx-auto px-4 py-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Grid3X3 className="w-4 h-4 text-blue-600" />
-              <h2 className="text-base font-bold text-gray-900">الأقسام</h2>
+        <section className="bg-white border-b border-gray-100/50">
+          <div className="max-w-6xl mx-auto px-4 py-7">
+            <div className="flex items-center gap-2.5 mb-5">
+              <span className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center">
+                <Grid3X3 className="w-4 h-4 text-blue-600" />
+              </span>
+              <h2 className="text-lg font-bold text-gray-900">الأقسام</h2>
             </div>
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory -mx-4 px-4">
               <CategoryCard
@@ -177,7 +183,7 @@ export default function StorePage() {
         </section>
       )}
 
-      {/* Featured Products */}
+      {/* Featured */}
       {featured.length > 0 && (
         <ProductCarousel
           title="منتجات مميزة"
@@ -194,21 +200,22 @@ export default function StorePage() {
           icon={<Clock className="w-4 h-4 text-blue-600" />}
           products={newArrivals}
           slug={slug!}
+          bgAlt
         />
       )}
 
-      {/* Search + Filter Bar */}
-      <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
+      {/* Search + Filter */}
+      <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-xl border-b border-gray-100/50 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 py-3">
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
+              <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
               <input
                 type="text"
                 placeholder="ابحث عن منتج..."
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setActiveCategory(null); }}
-                className="w-full pr-10 h-10 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100 transition-all"
+                className="w-full pr-11 h-10 bg-gray-50 border border-gray-200 rounded-2xl text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100/50 transition-all"
               />
               {search && (
                 <button
@@ -221,7 +228,7 @@ export default function StorePage() {
             </div>
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`h-10 px-3 rounded-xl border text-xs font-semibold transition-all flex items-center gap-1.5 ${
+              className={`h-10 px-4 rounded-2xl border text-xs font-semibold transition-all flex items-center gap-1.5 ${
                 hasActiveFilters
                   ? "bg-blue-50 border-blue-200 text-blue-600"
                   : "bg-gray-50 border-gray-200 text-gray-500 hover:bg-gray-100"
@@ -235,22 +242,22 @@ export default function StorePage() {
       </div>
 
       {/* Product Grid */}
-      <main className="max-w-6xl mx-auto px-4 py-6 sm:py-8">
+      <main className="max-w-6xl mx-auto px-4 py-8 sm:py-10">
         {products.length === 0 ? (
           <NoProducts />
         ) : filtered.length === 0 ? (
           <EmptyState onReset={resetFilters} />
         ) : (
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between bg-white px-5 py-3 rounded-2xl border border-gray-100/80 shadow-sm">
               <p className="text-sm text-gray-500">
-                <span className="font-semibold text-gray-900">{filtered.length}</span> {filtered.length === 1 ? "منتج" : "منتجات"}
+                <span className="font-bold text-gray-900">{filtered.length}</span> {filtered.length === 1 ? "منتج" : "منتجات"}
                 {activeCategory && <> في <span className="font-semibold text-blue-600">{activeCategory}</span></>}
               </p>
               {hasActiveFilters && (
                 <button
                   onClick={resetFilters}
-                  className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                  className="text-xs text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-1"
                 >
                   <X className="w-3 h-3" />
                   إزالة التصفية

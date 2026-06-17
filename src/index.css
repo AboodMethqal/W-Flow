@@ -74,9 +74,9 @@
   }
 }
 
-/* Storefront light theme */
+/* Storefront premium light theme */
 .storefront {
-  --background: 0 0% 100%;
+  --background: 220 14% 96%;
   --foreground: 222 47% 11%;
   --card: 0 0% 100%;
   --card-foreground: 222 47% 11%;
@@ -101,13 +101,13 @@
   --radius: 0.75rem;
 
   --surface: 0 0% 100%;
-  --surface-dim: 210 40% 98%;
+  --surface-dim: 220 14% 96%;
   --surface-bright: 0 0% 100%;
-  --surface-container-lowest: 0 0% 100%;
-  --surface-container-low: 210 40% 98%;
-  --surface-container: 210 40% 96%;
-  --surface-container-high: 214 32% 91%;
-  --surface-container-highest: 214 32% 91%;
+  --surface-container-lowest: 220 14% 96%;
+  --surface-container-low: 220 14% 96%;
+  --surface-container: 220 14% 92%;
+  --surface-container-high: 220 14% 88%;
+  --surface-container-highest: 220 10% 84%;
   --surface-tint: 217 89% 53%;
   --on-surface: 222 47% 11%;
   --on-surface-variant: 215 16% 47%;
@@ -132,6 +132,15 @@
 .storefront h2,
 .storefront h3 {
   font-family: 'IBM Plex Sans Arabic', sans-serif;
+}
+
+/* Storefront section styling */
+.storefront .section-alt {
+  background-color: hsl(220 14% 96%);
+}
+
+.storefront .section-white {
+  background-color: hsl(0 0% 100%);
 }
 
 @layer utilities {
