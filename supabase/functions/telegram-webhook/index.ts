@@ -453,7 +453,9 @@ Deno.serve(async (req) => {
 
   // Handle /start command
   if (text.startsWith("/start")) {
-    const code = text.replace("/start", "").trim();
+    let code = text.replace("/start", "").trim();
+    // Strip "ws-" prefix used in store deep-links
+    if (code.startsWith("ws-")) code = code.slice(3);
     if (!code) {
       await reply(chatId, "👋 مرحباً بك في نظام طلبات المتاجر!\n\nللتحدث مع متجر معين، استخدم الرابط الخاص الذي تحصل عليه من التاجر.");
       return new Response(JSON.stringify({ ok: true }), { status: 200, headers: corsHeaders });

@@ -15,9 +15,9 @@ export function ProductCard({ product, slug }: ProductCardProps) {
   return (
     <Link
       to={`/store/${slug}/product/${product.id}`}
-      className="group bg-white rounded-xl overflow-hidden border border-gray-100 hover:border-blue-100 hover:shadow-[0_4px_20px_rgba(37,99,235,0.1)] hover:-translate-y-0.5 transition-all duration-200 flex flex-col"
+      className="group bg-card rounded-xl overflow-hidden border border-border hover:border-primary/30 hover:shadow-[0_4px_20px_rgba(37,99,235,0.12)] hover:-translate-y-0.5 transition-all duration-200 flex flex-col"
     >
-      <div className="relative aspect-square bg-gray-50 overflow-hidden">
+      <div className="relative aspect-square bg-muted overflow-hidden">
         {product.image_url ? (
           <img
             src={product.image_url}
@@ -28,11 +28,11 @@ export function ProductCard({ product, slug }: ProductCardProps) {
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <ImageIcon className="w-10 h-10 text-gray-200" />
+            <ImageIcon className="w-10 h-10 text-muted-foreground/20" />
           </div>
         )}
         {!product.is_available && (
-          <span className="absolute top-2 right-2 px-2 py-0.5 bg-red-500 text-white text-[9px] font-bold rounded-md">
+          <span className="absolute top-2 right-2 px-2 py-0.5 bg-destructive text-destructive-foreground text-[9px] font-bold rounded-md">
             غير متوفر
           </span>
         )}
@@ -44,7 +44,7 @@ export function ProductCard({ product, slug }: ProductCardProps) {
         )}
         <span
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(tgDeepLink, "_blank"); }}
-          className="absolute bottom-2 left-2 right-2 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-center shadow-lg"
+          className="absolute bottom-2 left-2 right-2 py-2 bg-primary text-primary-foreground text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-center shadow-lg"
         >
           <ShoppingBag className="w-3.5 h-3.5 inline-block ml-1" />
           اطلب الآن
@@ -52,17 +52,17 @@ export function ProductCard({ product, slug }: ProductCardProps) {
       </div>
       <div className="p-2.5 flex flex-col gap-1">
         {product.category && (
-          <span className="text-[9px] text-gray-400 font-medium">{product.category}</span>
+          <span className="text-[9px] text-muted-foreground/60 font-medium">{product.category}</span>
         )}
-        <h3 className="text-[12px] font-semibold text-gray-900 leading-snug line-clamp-1">
+        <h3 className="text-[12px] font-semibold text-card-foreground leading-snug line-clamp-1">
           {product.name}
         </h3>
         <div className="flex items-center justify-between mt-0.5">
-          <p className="text-sm font-bold text-gray-900 tabular-nums">
+          <p className="text-sm font-bold text-card-foreground tabular-nums">
             {product.price.toLocaleString("ar-SA", { minimumFractionDigits: 0 })}
-            <span className="text-[9px] text-gray-400 mr-0.5">ر.س</span>
+            <span className="text-[9px] text-muted-foreground mr-0.5">ر.س</span>
           </p>
-          <span className="text-[9px] text-blue-600 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+          <span className="text-[9px] text-primary font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
             تفاصيل ←
           </span>
         </div>

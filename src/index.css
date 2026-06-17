@@ -119,6 +119,50 @@
   font-family: 'IBM Plex Sans Arabic', sans-serif;
 }
 
+/* Dark mode overrides for storefront */
+.storefront.dark,
+.storefront[data-theme="dark"] {
+  --background: 222 47% 6%;
+  --foreground: 210 40% 98%;
+  --card: 217 33% 10%;
+  --card-foreground: 210 40% 98%;
+  --popover: 217 33% 10%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 217 89% 53%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 217 33% 15%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217 33% 15%;
+  --muted-foreground: 215 20% 65%;
+  --accent: 217 33% 15%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 217 33% 17%;
+  --input: 217 33% 17%;
+  --ring: 217 89% 53%;
+
+  --surface: 217 33% 10%;
+  --surface-dim: 222 47% 6%;
+  --surface-bright: 217 33% 15%;
+  --surface-container-lowest: 222 47% 6%;
+  --surface-container-low: 217 33% 10%;
+  --surface-container: 217 33% 13%;
+  --surface-container-high: 217 33% 17%;
+  --surface-container-highest: 217 25% 22%;
+  --on-surface: 210 40% 98%;
+  --on-surface-variant: 215 20% 65%;
+  --outline: 217 33% 17%;
+  --outline-variant: 217 33% 17%;
+  --inverse-surface: 210 40% 98%;
+  --inverse-on-surface: 222 47% 6%;
+
+  --whatsapp: 142 71% 45%;
+
+  --shadow-primary: 0px 20px 40px rgba(37, 99, 235, 0.15);
+  --shadow-float: 0px 20px 40px rgba(0, 0, 0, 0.3);
+}
+
 @layer utilities {
   .glass { @apply bg-surface-container/80 backdrop-blur-xl; }
   .gradient-primary { background: var(--gradient-primary); }
